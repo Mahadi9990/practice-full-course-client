@@ -18,8 +18,11 @@ export default function User({ userInfo }) {
     })
       .then(res => res.json())
       .then(data => {
-        const newUser = [...user,data]
-        setuser(newUser)
+        if(data.insertedId){
+          newUser._id = data.insertedId
+          const newUsers = [...user,newUser]
+          setuser(newUsers)
+        }
         e.target.reset()
       });
   };
@@ -33,7 +36,7 @@ export default function User({ userInfo }) {
           <button>Submit</button>
         </form>
       </div>
-      <div>{user.map((item) => item.name)}</div>
+      <div>{user.map((item) => <div key={item._id}>{item.email}</div>)}</div>
     </>
   );
 }
