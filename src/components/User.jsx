@@ -1,7 +1,8 @@
-import React, { use, useState } from "react";
+import React, { useState } from "react";
+import { Link, useLoaderData } from "react-router";
 
-export default function User({ userInfo }) {
-  const initialUser = use(userInfo);
+export default function User() {
+  const initialUser = useLoaderData();
   const [user, setuser] = useState(initialUser);
   console.log(user)
   const handleSubmit = (e) => {
@@ -26,6 +27,18 @@ export default function User({ userInfo }) {
         e.target.reset()
       });
   };
+  const handleDelete =(id)=>{
+    console.log('delete')
+    fetch(`http://localhost:3000/user/${id}`,{
+      method:"DELETE"
+    }).then((res)=> res.json()).then(data => {
+      console.log(data.deletedCount)
+      if(data.deletedCount){
+        const remainUser =user.filter((item)=>  item._id !== id)
+        setuser(remainUser)
+      }
+    })
+  }
   return (
     <>
       <div className="">
@@ -36,7 +49,11 @@ export default function User({ userInfo }) {
           <button>Submit</button>
         </form>
       </div>
-      <div>{user.map((item) => <div key={item._id}>{item.email}</div>)}</div>
+      <div className="">{user.map((item) => <div className=" flex justify-center" key={item._id}>
+        <p className="">{item.email} </p>
+        <Link to={`/user/${item._id}`}><button className="btn">Details</button></Link>
+        <button onClick={()=>handleDelete(item._id)} className="btn">X</button>
+      </div>)}</div>
     </>
   );
 }
